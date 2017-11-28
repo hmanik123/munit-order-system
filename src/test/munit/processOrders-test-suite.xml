@@ -7,14 +7,15 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
     <spring:beans>
         <spring:import resource="classpath:munit-order-system.xml"/>
     </spring:beans>
-    <munit:test name="processOrders_payloadReturnsJavaMapWithTwoElements_true" description="Calling Process Order Flow returns payload of type Java Map containing two key value pairs">
+    <munit:before-test name="processOrders-test-suiteBefore_Test" description="Before tests actions">
         <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01}, {'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set payload to International and Domestic Orders"/>
+    </munit:before-test>
+    <munit:test name="processOrders_payloadReturnsJavaMapWithTwoElements_true" description="Calling Process Order Flow returns payload of type Java Map containing two key value pairs">
         <flow-ref name="processOrders" doc:name="processOrders"/>
         <munit:assert-true message="FAILED: Expected payload's datatype to be Java Map, but found #[payload.getClass().getName()] instead!!" condition="#[payload is java.util.HashMap]" doc:name="Assert True: Validate payload's type is Java Map"/>
         <munit:assert-on-equals message="FAILED: Expected two key/value pairs, but found #[payload.size()] instead!!" expectedValue="#[2]" actualValue="#[payload.size()]" doc:name="Assert Equals: Validate payload has TWO key/value pairs"/>
     </munit:test>
     <munit:test name="processOrders-internationalKeyContainsInternationOrders_True" description="Calling flow international process order" >
-        <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01}, {'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set payload to International and Domestic Orders"/>
         <flow-ref name="processOrders" doc:name="Call processOrders"/>
         <munit:assert-true message="!!!!!!!!!!!!!!!!!!!!FAILED: Expected international key has NO rows!!!!!!!!!!!!!!!!!!!!!" condition="#[payload.'international'.size()&gt;0]" doc:name="Assert True: Validate that international key has some rows"/>
         <foreach collection="#[payload.international]" doc:name="For Each:Row in international key, do ...">
@@ -22,7 +23,6 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
         </foreach>
     </munit:test>
        <munit:test name="processOrders-internationalKeyContainsDomesticOrders_True" description="Calling flow domestic process order" >
-        <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01}, {'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set payload to International and Domestic Orders"/>
         <flow-ref name="processOrders" doc:name="Call processOrders"/>
         <munit:assert-true message="!!!!!!!!!!!!!!!!!!!!FAILED: Expected international key has NO rows!!!!!!!!!!!!!!!!!!!!!" condition="#[payload.'domestic'.size()&gt;0]" doc:name="Assert True: Validate that domestic key has some rows"/>
         <foreach collection="#[payload.domestic]" doc:name="For Each:Row in international key, do ...">
