@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
     <spring:beans>
         <spring:import resource="classpath:munit-examples.xml"/>
     </spring:beans>
-    <munit:test name="sayHello_payloadReturnsHello_True" description="Calling sayHello flow returns payload as Hello" ignore="true">
+    <munit:test name="sayHello_payloadReturnsHello_True" description="Calling sayHello flow returns payload as Hello" >
         <flow-ref name="CallsayHelloFlow" doc:name="CallsayHelloFlow"/>
         <munit:assert-payload-equals message="Oops.. payload is not Hello" expectedValue="#['Hello']" doc:name="Assert Payload: Validate that payload returns Hello"/>
     </munit:test>
